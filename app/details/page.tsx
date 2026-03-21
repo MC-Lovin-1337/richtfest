@@ -69,7 +69,7 @@ export default function DetailsPage() {
       title: "Richtfest Seevetal",
       start: "20260615T160000",
       end: "20260615T220000",
-      location: "Am Baufeld 12, 21217 Seevetal",
+      location: "Hinter dem Dorfe 2, 21258 Heidenau",
     };
     const icsContent = `BEGIN:VCALENDAR\nVERSION:2.0\nBEGIN:VEVENT\nSUMMARY:${event.title}\nDTSTART:${event.start}\nDTEND:${event.end}\nLOCATION:${event.location}\nEND:VEVENT\nEND:VCALENDAR`;
     const blob = new Blob([icsContent], {
