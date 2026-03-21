@@ -1,70 +1,300 @@
-:root {
-  --bg-color: #f3f0ec;
+/* --- BASIS RESET --- */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 body, html {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  background-color: var(--bg-color);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  font-family: 'serif';
-}
-
-.main-container {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   width: 100vw;
   height: 100vh;
+  overflow-x: hidden;
+  background-color: #f3f0ec;
+  font-family: 'Georgia', serif;
+  -webkit-tap-highlight-color: transparent;
+  color: #4a4a4a;
 }
 
-.perspective-container {
-  width: 100%;
-  max-width: 550px;
+/* --- SEITE 1: VOLLBILD (Einleitung) --- */
+.viewport-wrapper {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+  cursor: pointer;
+  overflow: hidden;
   display: flex;
+  align-items: center;
   justify-content: center;
+}
+
+.full-screen-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  object-fit: cover;
   z-index: 10;
 }
 
-.invite-wrapper {
-  width: 100wh;
-  height: 100VH;
-  aspect-ratio: 4 / 3;
-  cursor: pointer;
+/* --- SEITE 2: DETAILS (Richtfest) --- */
+.details-viewport {
+  width: 100vw;
+  min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 60px 20px;
+  background-color: #f3f0ec;
 }
 
-.envelope-main-img {
+.details-content {
+  max-width: 600px;
+  width: 100%;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+}
+
+.details-title {
+  font-size: clamp(1.8rem, 5vw, 2.8rem);
+  font-weight: normal;
+  font-style: italic;
+  margin-bottom: 20px;
+  letter-spacing: 1px;
+}
+
+.details-divider {
+  width: 60px;
+  height: 1px;
+  background: #d1c4b4;
+  margin: 20px auto;
+}
+
+.details-text {
+  font-size: 1.1rem;
+  line-height: 1.8;
+  margin-bottom: 30px;
+  opacity: 0.9;
+}
+
+.info-section {
+  margin: 30px 0;
+  line-height: 2;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+}
+
+/* --- MODERNE DIASHOW --- */
+.slideshow-container {
+  width: 100%;
+  height: 320px;
+  position: relative;
+  overflow: hidden;
+  border-radius: 24px;
+  margin-bottom: 40px;
+  background-color: #e8e4e0;
+  box-shadow: 0 20px 45px rgba(0,0,0,0.1);
+}
+
+.slide-img {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
-  object-fit: contain;
-  /* Ein sehr weicher Schatten, der den Umschlag vom Hintergrund abhebt */
-  filter: drop-shadow(0 20px 40px rgba(0,0,0,0.1));
+  object-fit: cover;
 }
 
-.hint-text {
-  position: absolute;
-  bottom: 15%;
-  font-size: 0.8rem;
-  color: #a0a0a0;
+/* --- COUNTDOWN TIMER --- */
+.countdown-container {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin: 40px 0;
+}
+
+.countdown-item {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.65rem;
   text-transform: uppercase;
-  letter-spacing: 3px;
-  text-align: center;
-  pointer-events: none;
+  letter-spacing: 2px;
+  color: #8a8a8a;
 }
 
-/* Optional: Ein sanfter Farbverlauf im Hintergrund */
-.background-overlay {
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, rgba(0,0,0,0) 70%);
-  z-index: 1;
-  pointer-events: none;
+.countdown-item span {
+  font-size: 2.2rem;
+  color: #4a4a4a;
+  font-weight: 300;
+  margin-bottom: 4px;
+}
+
+/* --- RSVP FORMULAR --- */
+.form-container {
+  background: white;
+  padding: 45px 35px;
+  border-radius: 24px;
+  box-shadow: 0 12px 35px rgba(0,0,0,0.04);
+  margin-top: 20px;
+}
+
+.form-container h3 {
+  font-weight: normal;
+  font-style: italic;
+  margin-bottom: 25px;
+  font-size: 1.4rem;
+}
+
+.rsvp-form-simple {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-input {
+  width: 100%;
+  padding: 15px;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  font-family: inherit;
+  font-size: 1rem;
+  background: #fafafa;
+  transition: all 0.3s ease;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #d1c4b4;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(209, 196, 180, 0.1);
+}
+
+.submit-btn {
+  background: #4a4a4a;
+  color: white;
+  padding: 18px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  letter-spacing: 2px;
+  font-weight: bold;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  margin-top: 10px;
+}
+
+.submit-btn:hover {
+  background: #2d2d2d;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.submit-btn:disabled {
+  background: #a5a5a5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.status-msg {
+  margin-top: 20px;
+  font-size: 0.95rem;
+  font-style: italic;
+  color: #6a6a6a;
+}
+
+/* --- NAVIGATION & LINKS --- */
+.back-link {
+  background: none;
+  border: none;
+  color: #aaa;
+  margin-top: 50px;
+  cursor: pointer;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: color 0.3s;
+  text-decoration: none;
+}
+
+.back-link:hover {
+  color: #4a4a4a;
+}
+
+/* --- RESPONSIVE OPTIMIERUNG --- */
+@media (max-width: 600px) {
+  .details-viewport {
+    padding: 40px 15px;
+  }
+  
+  .slideshow-container {
+    height: 240px;
+    border-radius: 18px;
+  }
+  
+  .form-container {
+    padding: 30px 20px;
+    border-radius: 18px;
+  }
+  
+  .countdown-container {
+    gap: 12px;
+  }
+  
+  .countdown-item span {
+    font-size: 1.6rem;
+  }
+  .map-container {
+  width: 100%;
+  margin: 20px 0;
+  border-radius: 16px;
+  overflow: hidden; /* Damit die runden Ecken auch beim Iframe greifen */
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+  border: 1px solid #d1c4b4;
+}
+
+.map-container iframe {
+  display: block; /* Verhindert kleine Lücken am Rand */
+}
+/* --- MODERNES MAP IFRAME --- */
+.map-container {
+  width: 100%;
+  /* Steuert das Seitenverhältnis (modernes 16:9) */
+  aspect-ratio: 16 / 9; 
+  margin: 25px 0;
+  border-radius: 20px; /* Weichere, größere Ecken */
+  overflow: hidden; /* Zwingend für runde Ecken beim Iframe */
+  
+  /* Eleganter, tiefer Schatten für "Schwebeeffekt" */
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08); 
+  
+  /* Subtiler Rand in der Akzentfarbe */
+  border: 1px solid rgba(209, 196, 180, 0.5);
+  
+  /* Vorbereitung für Hover-Animation */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+}
+
+/* Hover-Effekt: Karte hebt sich leicht an */
+.map-container:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 35px rgba(0,0,0,0.12);
+}
+
+.map-container iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+}
+
+/* Mobile Optimierung: Etwas kompakter auf Handys */
+@media (max-width: 600px) {
+  .map-container {
+    aspect-ratio: 4 / 3; /* Quadratischer auf kleinen Screens */
+    border-radius: 16px;
+  }
+}
 }

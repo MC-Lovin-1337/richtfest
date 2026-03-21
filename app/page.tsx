@@ -1,9 +1,10 @@
 "use client";
 import { useState } from "react";
-import { motion, AnimatePresence, Variants } from "framer-motion";
-import { useRouter } from "next/navigation"; // Für die Weiterleitung
+import { motion, Variants } from "framer-motion";
+import { useRouter } from "next/navigation";
+import confetti from "canvas-confetti";
 
-const envelopeVariants: Variants = {
+const fullScreenVariants: Variants = {
   closed: {
     opacity: 1,
     scale: 1,
@@ -11,11 +12,11 @@ const envelopeVariants: Variants = {
   },
   open: {
     opacity: 0,
-    scale: 1.1, // Leichter Zoom-Effekt beim Verschwinden
-    filter: "blur(10px)", // Wird leicht unscharf für einen edlen Übergang
+    scale: 1.05,
+    filter: "blur(20px)",
     transition: {
-      duration: 1.2, // Schön langsam und elegant
-      ease: [0.43, 0.13, 0.23, 0.96],
+      duration: 2.5,
+      ease: [0.4, 0, 0.2, 1],
     },
   },
 };
@@ -24,44 +25,66 @@ export default function WeddingInvite() {
   const [isTransitioning, setIsTransitioning] = useState(false);
   const router = useRouter();
 
-  const handleOpen = () => {
+  const firework = () => {
+    const duration = 2000; // Dauer des Feuerwerks in ms
+    const animationEnd = Date.now() + duration;
+    const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 100 };
+
+    const randomInRange = (min: number, max: number) =>
+      Math.random() * (max - min) + min;
+
+    const interval: any = setInterval(function () {
+      const timeLeft = animationEnd - Date.now();
+
+      if (timeLeft <= 0) {
+        return clearInterval(interval);
+      }
+
+      const particleCount = 50 * (timeLeft / duration);
+
+      // Zwei Salven pro Intervall an zufälligen Positionen
+      confetti({
+        ...defaults,
+        particleCount,
+        origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
+        colors: ["#d1c4b4", "#ffffff", "#4a4a4a"], // Elegante Farben passend zu deinem Design
+      });
+      confetti({
+        ...defaults,
+        particleCount,
+        origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
+        colors: ["#d1c4b4", "#ffffff", "#4a4a4a"],
+      });
+    }, 250);
+  };
+
+  const handleStart = () => {
+    if (isTransitioning) return;
     setIsTransitioning(true);
 
-    // Warte, bis die Animation fast fertig ist, dann leite weiter
+    // Feuerwerk starten
+    firework();
+
+    // Wechselt nach der Animation zur Detail-Seite
     setTimeout(() => {
-      router.push("/details"); // Hier den Namen deiner Zielseite eintragen (z.B. /einladung)
-    }, 1200);
+      router.push("/details");
+    }, 3200); // Etwas länger warten, damit das Feuerwerk wirken kann
   };
 
   return (
-    <div className="main-container">
-      <AnimatePresence>
-        {!isTransitioning && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="invite-content"
-          >
-            <div className="perspective-container">
-              <div className="invite-wrapper" onClick={handleOpen}>
-                {/* DEIN BILD: brief.png */}
-                <motion.img
-                  src="/brief.png"
-                  alt="Umschlag"
-                  className="envelope-main-img"
-                  variants={envelopeVariants}
-                  initial="closed"
-                  animate={isTransitioning ? "open" : "closed"}
-                />
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Optionaler Ladeindikator oder Hintergrund, der währenddessen schon durchscheint */}
-      <div className="background-overlay"></div>
-    </div>
+    <main
+      className="viewport-wrapper"
+      onClick={handleStart}
+      style={{ overflow: "hidden" }}
+    >
+      <motion.img
+        src="/brief.png"
+        alt="Einladung Vollbild"
+        className="full-screen-image"
+        variants={fullScreenVariants}
+        initial="closed"
+        animate={isTransitioning ? "open" : "closed"}
+      />
+    </main>
   );
 }
