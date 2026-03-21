@@ -3,29 +3,33 @@
 export async function submitForm(formData: FormData) {
   const accessKey = process.env.WEB3FORMS_ACCESS_KEY;
   
-  console.log("Check AccessKey Status:", accessKey ? "✅ Gefunden" : "❌ FEHLT!");
-
   if (!accessKey) {
     return { success: false, message: "Konfiguration fehlt" };
   }
 
-  formData.append("access_key", accessKey);
+  // Wir stellen sicher, dass der Key wirklich im FormData ist
+  formData.set("access_key", accessKey);
 
   try {
     const response = await fetch("https://api.web3forms.com/submit", {
       method: "POST",
+      // WICHTIG: Kein "Content-Type" Header manuell setzen, 
+      // wenn man FormData verschickt! Der Browser/Server macht das selbst.
       body: formData,
     });
-    
-    const result = await response.json();
-    
-    // --- DIESE ZEILE HIER ZEIGT UNS DEN ECHTEN GRUND IM VERCEL LOG ---
-    console.log("Web3Forms Server Antwort:", JSON.stringify(result));
-    // ---------------------------------------------------------------
 
+    // Zuerst prüfen: Ist die Antwort überhaupt JSON?
+    const contentType = response.headers.get("content-type");
+    if (!contentType || !contentType.includes("application/json")) {
+      const errorText = await response.text();
+      console.error("Web3Forms lieferte HTML statt JSON:", errorText.slice(0, 100));
+      return { success: false, message: "Server antwortet falsch (HTML)" };
+    }
+
+    const result = await response.json();
     return result;
   } catch (error) {
-    console.error("Fetch Fehler:", error);
-    return { success: false, message: "Server-Fehler" };
+    console.error("Fetch Fehler im Detail:", error);
+    return { success: false, message: "Verbindungsfehler" };
   }
 }
