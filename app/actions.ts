@@ -3,11 +3,14 @@
 export async function submitForm(formData: FormData) {
   const accessKey = process.env.WEB3FORMS_ACCESS_KEY;
   
+  // --- DIESE ZEILE HIER EINFÜGEN ---
+  console.log("Check AccessKey Status:", accessKey ? "✅ Gefunden" : "❌ FEHLT!");
+  // ---------------------------------
+
   if (!accessKey) {
     return { success: false, message: "Konfiguration fehlt" };
   }
 
-  // Wir fügen den Key erst hier auf dem Server hinzu
   formData.append("access_key", accessKey);
 
   try {
