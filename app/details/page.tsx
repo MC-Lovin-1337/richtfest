@@ -82,17 +82,25 @@ export default function DetailsPage() {
   };
 
   // --- FORMULAR MIT KONFETTI ---
+  // --- NEUES FORMULAR-HANDLING (DIREKT) ---
   const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setSentStatus("Wird gesendet...");
 
     const formData = new FormData(e.currentTarget);
 
-    try {
-      // Wir rufen die Server-Funktion auf, der Key ist hier nicht sichtbar!
-      const res = await submitForm(formData);
+    // DEIN ACCESS KEY HIER EINTRAGEN:
+    formData.append("access_key", "a48e61a4-1dd6-49fc-8c7d-b125aab36fb5");
 
-      if (res.success) {
+    try {
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        body: formData,
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
         setSentStatus("Erfolgreich gesendet! 🎉");
         confetti({
           particleCount: 150,
@@ -103,10 +111,11 @@ export default function DetailsPage() {
         (e.target as HTMLFormElement).reset();
         setTimeout(() => router.push("/"), 5000);
       } else {
-        setSentStatus("Fehler beim Senden.");
+        // Hier sehen wir jetzt direkt im Browser, was Web3Forms stört
+        setSentStatus("Fehler: " + (result.message || "Prüfe den Key"));
       }
     } catch (error) {
-      setSentStatus("Verbindungsfehler.");
+      setSentStatus("Verbindungsfehler. Bitte erneut versuchen.");
     }
   };
 
