@@ -164,12 +164,25 @@ export default function DetailsPage() {
             <strong>WO:</strong> Hinter dem Dorfe 2, 21258 Heidenau
           </p>
 
-          <div className="map-container">
+          <div
+            className="map-container"
+            style={{
+              borderRadius: "16px",
+              overflow: "hidden",
+              boxShadow: "0 4px 15px rgba(0,0,0,0.08)",
+              marginTop: "20px",
+              height: "300px",
+              border: "1px solid #eee",
+            }}
+          >
             <iframe
-              src="https://maps.app.goo.gl/GhDK6PVw69joAVGx5"
+              width="100%"
+              height="100%"
               style={{ border: 0 }}
-              allowFullScreen={true}
               loading="lazy"
+              allowFullScreen
+              referrerPolicy="no-referrer-when-downgrade"
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2383.784856240875!2d9.638466694004487!3d53.311299205875564!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47b1a06781aec761%3A0xcb79d8f3214ad5a3!2sHinter%20dem%20Dorfe%2C%2021258%20Heidenau!5e0!3m2!1sde!2sde!4v1774135090185!5m2!1sde!2sde"
             ></iframe>
           </div>
 
@@ -191,7 +204,6 @@ export default function DetailsPage() {
                 <span className="calendar-icon-animated">📅</span>
                 <div className="btn-text-wrapper">
                   <span className="btn-main-text">TERMIN SPEICHERN</span>
-                  <span className="btn-sub-text">iCal / Outlook / Google</span>
                 </div>
               </div>
             </motion.button>
