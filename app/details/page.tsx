@@ -43,7 +43,7 @@ export default function DetailsPage() {
   });
 
   useEffect(() => {
-    const targetDate = new Date("2026-06-15T16:00:00").getTime();
+    const targetDate = new Date("2026-05-01T18:00:00").getTime();
     const interval = setInterval(() => {
       const now = new Date().getTime();
       const distance = targetDate - now;
@@ -66,7 +66,7 @@ export default function DetailsPage() {
   // --- KALENDER EXPORT ---
   const addToCalendar = () => {
     const event = {
-      title: "Richtfest Seevetal",
+      title: "Richtfest Ellena und Sven Hinter dem Dorfe 2",
       start: "20260615T160000",
       end: "20260615T220000",
       location: "Hinter dem Dorfe 2, 21258 Heidenau",
@@ -139,10 +139,10 @@ export default function DetailsPage() {
         {/* INFOS & KARTE */}
         <div className="info-section">
           <p>
-            <strong>WANN:</strong> 15. Juni 2026, 16:00 Uhr
+            <strong>WANN:</strong> 01. Mai 2026, 18:00 Uhr
           </p>
           <p>
-            <strong>WO:</strong> Am Baufeld 12, Seevetal
+            <strong>WO:</strong> Hinter dem Dorfe 2, 21258 Heidenau
           </p>
 
           <div className="map-container">
