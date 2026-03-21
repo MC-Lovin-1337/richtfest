@@ -297,4 +297,115 @@ body, html {
     border-radius: 16px;
   }
 }
+/* --- CSS für das Popup (Modal) --- */
+
+/* Das dunkle Overlay im Hintergrund, das die ganze Seite bedeckt */
+.popup-overlay {
+  position: fixed; /* WICHTIG: Schwebt über der Seite */
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.6); /* Dunkler, transparenter Hintergrund */
+  backdrop-filter: blur(5px); /* Optional: Macht den Hintergrund leicht unscharf */
+  display: flex;
+  justify-content: center; /* Zentriert das Popup horizontal */
+  align-items: center; /* Zentriert das Popup vertikal */
+  z-index: 9999; /* WICHTIG: Liegt ganz oben auf allen anderen Elementen */
+}
+
+/* Das eigentliche Popup-Fenster */
+.popup-content {
+  background-color: white;
+  padding: 40px;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  max-width: 400px;
+  width: 90%; /* Für mobile Geräte */
+  border: 2px solid #d1c4b4; /* Passt zum Konfetti-Farbschema */
+}
+
+.popup-content h2 {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #4a4a4a;
+  margin-bottom: 20px;
+}
+
+.popup-content p {
+  font-size: 1.2rem;
+  color: #6b6b6b;
+  line-height: 1.6;
+}
+
+/* Der Schließen-Button im Popup */
+.popup-close-btn {
+  margin-top: 30px;
+  padding: 10px 25px;
+  background-color: #d1c4b4;
+  color: white;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.popup-close-btn:hover {
+  background-color: #c4b5a3; /* Leicht dunklerer Ton beim Hover */
+}
+.calendar-btn-premium {
+  background-color: #d1c4b4;
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 10px 25px;
+  border-radius: 16px; /* Modernerer Radius als die volle Pille */
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(209, 196, 180, 0.3);
+  transition: all 0.3s ease;
+  margin: 15px auto;
+  display: block;
+  min-width: 240px;
+}
+
+.btn-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+}
+
+.calendar-icon-animated {
+  font-size: 1.5rem;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+}
+
+.btn-text-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.btn-main-text {
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 1.5px;
+  line-height: 1.2;
+}
+
+.btn-sub-text {
+  font-size: 0.65rem;
+  opacity: 0.8;
+  font-weight: 400;
+  letter-spacing: 0.5px;
+}
+
+/* Hover-Effekt für das Icon */
+.calendar-btn-premium:hover .calendar-icon-animated {
+  transform: rotate(-10deg) scale(1.1);
+  transition: transform 0.3s ease;
+}
+
 }

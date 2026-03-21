@@ -1,11 +1,14 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence, Variants } from "framer-motion";
 import { useRouter } from "next/navigation";
 import confetti from "canvas-confetti";
-import { submitForm } from "../actions";
 
-// Sanfter Cross-Fade für die Bilder
+// ==========================================
+// ZENTRALE EINSTELLUNGEN
+const EVENT_DATE = "2026-12-01T15:10:00";
+// ==========================================
+
 const fastEnterVariants: Variants = {
   enter: { opacity: 0, scale: 1.02 },
   center: {
@@ -25,8 +28,21 @@ export default function DetailsPage() {
   const images = ["/haus1.jpg", "/haus2.jpg", "/haus3.jpg"];
   const [currentImg, setCurrentImg] = useState(0);
   const [sentStatus, setSentStatus] = useState("");
+  const [showPopup, setShowPopup] = useState(false);
 
-  // --- DIASHOW TIMER ---
+  const formattedDateText = useMemo(() => {
+    const d = new Date(EVENT_DATE);
+    return (
+      d.toLocaleString("de-DE", {
+        day: "2-digit",
+        month: "long",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      }) + " Uhr"
+    );
+  }, []);
+
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentImg((prev) => (prev === images.length - 1 ? 0 : prev + 1));
@@ -34,7 +50,6 @@ export default function DetailsPage() {
     return () => clearInterval(timer);
   }, [images.length]);
 
-  // --- COUNTDOWN LOGIK ---
   const [timeLeft, setTimeLeft] = useState({
     days: 0,
     hours: 0,
@@ -43,7 +58,7 @@ export default function DetailsPage() {
   });
 
   useEffect(() => {
-    const targetDate = new Date("2026-05-01T18:00:00").getTime();
+    const targetDate = new Date(EVENT_DATE).getTime();
     const interval = setInterval(() => {
       const now = new Date().getTime();
       const distance = targetDate - now;
@@ -63,15 +78,19 @@ export default function DetailsPage() {
     return () => clearInterval(interval);
   }, []);
 
-  // --- KALENDER EXPORT ---
   const addToCalendar = () => {
+    const d = new Date(EVENT_DATE);
+    const formatICS = (date: Date) =>
+      date.toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
+    const startStr = formatICS(d);
+    const endStr = formatICS(new Date(d.getTime() + 4 * 60 * 60 * 1000));
+
     const event = {
       title: "Richtfest Ellena und Sven Hinter dem Dorfe 2",
-      start: "20260615T160000",
-      end: "20260615T220000",
       location: "Hinter dem Dorfe 2, 21258 Heidenau",
     };
-    const icsContent = `BEGIN:VCALENDAR\nVERSION:2.0\nBEGIN:VEVENT\nSUMMARY:${event.title}\nDTSTART:${event.start}\nDTEND:${event.end}\nLOCATION:${event.location}\nEND:VEVENT\nEND:VCALENDAR`;
+
+    const icsContent = `BEGIN:VCALENDAR\nVERSION:2.0\nBEGIN:VEVENT\nSUMMARY:${event.title}\nDTSTART:${startStr}\nDTEND:${endStr}\nLOCATION:${event.location}\nEND:VEVENT\nEND:VCALENDAR`;
     const blob = new Blob([icsContent], {
       type: "text/calendar;charset=utf-8",
     });
@@ -81,15 +100,10 @@ export default function DetailsPage() {
     link.click();
   };
 
-  // --- FORMULAR MIT KONFETTI ---
-  // --- NEUES FORMULAR-HANDLING (DIREKT) ---
   const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setSentStatus("Wird gesendet...");
-
     const formData = new FormData(e.currentTarget);
-
-    // DEIN ACCESS KEY HIER EINTRAGEN:
     formData.append("access_key", "a48e61a4-1dd6-49fc-8c7d-b125aab36fb5");
 
     try {
@@ -97,9 +111,7 @@ export default function DetailsPage() {
         method: "POST",
         body: formData,
       });
-
       const result = await response.json();
-
       if (result.success) {
         setSentStatus("Erfolgreich gesendet! 🎉");
         confetti({
@@ -108,14 +120,14 @@ export default function DetailsPage() {
           origin: { y: 0.6 },
           colors: ["#d1c4b4", "#4a4a4a", "#ffffff"],
         });
+        setShowPopup(true);
         (e.target as HTMLFormElement).reset();
-        setTimeout(() => router.push("/"), 5000);
+        setTimeout(() => router.push("/"), 6000);
       } else {
-        // Hier sehen wir jetzt direkt im Browser, was Web3Forms stört
         setSentStatus("Fehler: " + (result.message || "Prüfe den Key"));
       }
     } catch (error) {
-      setSentStatus("Verbindungsfehler. Bitte erneut versuchen.");
+      setSentStatus("Verbindungsfehler.");
     }
   };
 
@@ -127,7 +139,6 @@ export default function DetailsPage() {
         animate={{ opacity: 1 }}
         transition={{ duration: 1 }}
       >
-        {/* DIASHOW */}
         <div className="slideshow-container">
           <AnimatePresence mode="popLayout">
             <motion.img
@@ -145,10 +156,9 @@ export default function DetailsPage() {
         <h1 className="details-title typewriter">Richtfest Einladung</h1>
         <div className="details-divider"></div>
 
-        {/* INFOS & KARTE */}
         <div className="info-section">
           <p>
-            <strong>WANN:</strong> 01. Mai 2026, 18:00 Uhr
+            <strong>WANN:</strong> {formattedDateText}
           </p>
           <p>
             <strong>WO:</strong> Hinter dem Dorfe 2, 21258 Heidenau
@@ -156,22 +166,38 @@ export default function DetailsPage() {
 
           <div className="map-container">
             <iframe
-              src="https://maps.google.com/maps?q=Hinter+dem+Dorfe,+21258+Heidenau&t=&z=17&ie=UTF8&iwloc=&output=embed"
+              src="https://maps.app.goo.gl/GhDK6PVw69joAVGx5"
               style={{ border: 0 }}
               allowFullScreen={true}
               loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
             ></iframe>
           </div>
 
           <div className="button-group">
-            <button className="mini-btn" onClick={addToCalendar}>
-              📅 TERMIN SPEICHERN
-            </button>
+            <motion.button
+              className="calendar-btn-premium"
+              onClick={addToCalendar}
+              whileHover={{
+                scale: 1.03,
+                backgroundColor: "rgba(209, 196, 180, 0.9)",
+                boxShadow: "0 10px 25px rgba(0,0,0,0.1)",
+              }}
+              whileTap={{ scale: 0.97 }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+            >
+              <div className="btn-content">
+                <span className="calendar-icon-animated">📅</span>
+                <div className="btn-text-wrapper">
+                  <span className="btn-main-text">TERMIN SPEICHERN</span>
+                  <span className="btn-sub-text">iCal / Outlook / Google</span>
+                </div>
+              </div>
+            </motion.button>
           </div>
         </div>
 
-        {/* COUNTDOWN */}
         <div className="countdown-container">
           <div className="countdown-item">
             <span>{timeLeft.days}</span>Tage
@@ -187,7 +213,6 @@ export default function DetailsPage() {
           </div>
         </div>
 
-        {/* RSVP FORMULAR */}
         <div className="form-container">
           <h3 className="typewriter">Zusagen / Absagen</h3>
           <form className="rsvp-form-simple" onSubmit={handleFormSubmit}>
@@ -233,6 +258,40 @@ export default function DetailsPage() {
           ZURÜCK
         </button>
       </motion.div>
+
+      <AnimatePresence>
+        {showPopup && (
+          <motion.div
+            className="popup-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setShowPopup(false)}
+          >
+            <motion.div
+              className="popup-content"
+              initial={{ scale: 0.5, y: 100 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.5, y: 100 }}
+              transition={{ type: "spring", stiffness: 300, damping: 20 }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <h2>Vielen Dank!</h2>
+              <p>
+                Wir freuen uns sehr,
+                <br />
+                über die Zusage! ❤️
+              </p>
+              <button
+                onClick={() => setShowPopup(false)}
+                className="popup-close-btn"
+              >
+                Schließen
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </main>
   );
 }
