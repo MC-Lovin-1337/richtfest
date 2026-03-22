@@ -504,6 +504,25 @@ export default function DetailsPage() {
                     >
                       🍎 Apple Maps
                     </button>
+                    <button
+                      onClick={() => {
+                        // Waze nutzt ein spezielles URL-Schema: waze://?q=ADRESSE&navigate=yes
+                        const url = `https://waze.com/ul?q=${encodeURIComponent(
+                          ADDRESS
+                        )}&navigate=yes`;
+                        window.open(url, "_blank");
+                        setShowNavOptions(false);
+                      }}
+                      style={{
+                        padding: "12px",
+                        borderRadius: "10px",
+                        border: "1px solid #ddd",
+                        background: "#f9f9f9",
+                        cursor: "pointer",
+                      }}
+                    >
+                      🚙 Waze Navigation
+                    </button>
                   </div>
 
                   <button
