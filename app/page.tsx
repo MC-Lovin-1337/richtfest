@@ -84,7 +84,7 @@ export default function WeddingInvite() {
     firework();
     setTimeout(() => {
       router.push("/details");
-    }, 5500); // Zeit erhöht, damit das Feuerwerk wirken kann
+    }, 3000); // Zeit erhöht, damit das Feuerwerk wirken kann
   };
 
   return (
