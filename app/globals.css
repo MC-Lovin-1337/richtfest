@@ -44,7 +44,7 @@ body, html {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 60px 20px;
+  /* padding: 60px 20px; */
   background-color: #f3f0ec;
 }
 
@@ -225,7 +225,7 @@ body, html {
 /* --- RESPONSIVE OPTIMIERUNG --- */
 @media (max-width: 600px) {
   .details-viewport {
-    padding: 40px 15px;
+    /* padding: 40px 15px; */
   }
   
   .slideshow-container {

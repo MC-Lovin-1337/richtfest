@@ -161,37 +161,21 @@ export default function DetailsPage() {
         animate={{ opacity: 1 }}
         transition={{ duration: 1 }}
       >
-        {/* SLIDESHOW MIT WEICHEM SCHATTEN-EFFEKT (VIGNETTE) */}
+        {/* SLIDESHOW OHNE SCHATTEN UND OHNE ABGERUNDETE KANTEN */}
         <div
           className="slideshow-container"
           style={{
             position: "relative",
             overflow: "hidden",
-            height: "400px", // Höhe festlegen
-            width: "100%", // Volle Breite
-            margin: "0 auto 40px", // Zentriert, Abstand nach unten
-
-            // 1. Der äußere, weiche Schatten
-            boxShadow: "0 20px 80px rgba(0,0,0,0.15)",
-
-            // 2. Abrundung für einen weicheren Look
-            borderRadius: "40px",
+            height: "400px",
+            width: "100%",
+            margin: "0 auto 40px",
+            // Schatten und Border-Radius entfernt
+            boxShadow: "none",
+            borderRadius: "0px",
           }}
         >
-          {/* 3. Der innere Schatten (Vignette), der die Kanten des Bildes weich macht */}
-          <div
-            style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              width: "100%",
-              height: "100%",
-              boxShadow: "inset 0 0 100px 30px rgba(255,255,255,0.8)", // Weißer Innenschatten
-              zIndex: 10, // Liegt über dem Bild
-              pointerEvents: "none", // Klicks gehen durch
-              borderRadius: "40px", // Gleiche Abrundung
-            }}
-          />
+          {/* Innere Vignette (der weiße Verlauf) wurde komplett entfernt */}
 
           <AnimatePresence mode="popLayout">
             <motion.img
@@ -205,8 +189,8 @@ export default function DetailsPage() {
               style={{
                 width: "100%",
                 height: "100%",
-                objectFit: "cover", // Bild füllt den Container
-                borderRadius: "40px", // Bild abrunden
+                objectFit: "cover",
+                borderRadius: "0px", // Bild-Abrundung ebenfalls entfernt
               }}
             />
           </AnimatePresence>
@@ -289,13 +273,14 @@ export default function DetailsPage() {
 
         {/* --- AB HIER: LANGSAMES SCHWEBEN BEIM SCROLLEN --- */}
 
-        {/* COUNTDOWN */}
+        {/* COUNTDOWN MIT ZUSÄTZLICHEM ABSTAND NACH OBEN */}
         <motion.div
           className="countdown-container"
+          style={{ marginTop: "-25px" }} // Hier ist der Margin eingebaut
           variants={slowScrollReveal}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, amount: 0.1 }} // Reagiert etwas früher
+          viewport={{ once: true, amount: 0.1 }}
         >
           <div className="countdown-item">
             <span>{timeLeft.days}</span>Tage
