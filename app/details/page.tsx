@@ -7,7 +7,7 @@ import confetti from "canvas-confetti";
 // ==========================================
 // ZENTRALE EINSTELLUNGEN
 const EVENT_DATE = "2026-12-01T15:10:00";
-const ADDRESS = "Hinter dem Dorfe 2, 21258 Heidenau";
+const ADDRESS = "Hinter dem Dorfe, 21258 Heidenau";
 const INTERMEDIATE_TEXT = "Wir bauen unser Glück – und ihr seid dabei!";
 // ==========================================
 
@@ -391,47 +391,43 @@ export default function DetailsPage() {
             ></iframe>
           </div>
 
-          <div
-            className="button-group"
-            style={{
-              display: "flex",
-              gap: "10px",
-              justifyContent: "center",
-              flexWrap: "wrap",
-            }}
-          >
-            {/* GOOGLE MAPS BUTTON */}
+          <div className="button-group">
             <motion.button
               className="calendar-btn-premium"
-              style={{ minWidth: "160px", fontSize: "0.9rem" }}
               onClick={() => {
-                const url = `https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2383.7848522500085!2d9.640762677075488!3d53.311299277344936!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47b1a06781aec761%3A0xcb79d8f3214ad5a3!2sHinter%20dem%20Dorfe%2C%2021258%20Heidenau!5e0!3m2!1sde!2sde!4v1774146089892!5m2!1sde!2sde`;
-                window.open(url, "_blank");
-              }}
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.97 }}
-            >
-              <div className="btn-content">
-                <span>🌐</span>
-                <span className="btn-main-text">GOOGLE MAPS</span>
-              </div>
-            </motion.button>
+                const address = ADDRESS; // Deine Konstante "Hinter dem Dorfe 2, 21258 Heidenau"
+                const encodedAddress = encodeURIComponent(address);
 
-            {/* APPLE MAPS BUTTON */}
-            <motion.button
-              className="calendar-btn-premium"
-              style={{ minWidth: "160px", fontSize: "0.9rem" }}
-              onClick={() => {
-                // maps:// triggert auf iPhones direkt Apple Maps
-                const url = `https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2383.7848522500085!2d9.640762677075488!3d53.311299277344936!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47b1a06781aec761%3A0xcb79d8f3214ad5a3!2sHinter%20dem%20Dorfe%2C%2021258%20Heidenau!5e0!3m2!1sde!2sde!4v1774146089892!5m2!1sde!2sde`;
-                window.open(url, "_blank");
+                // 1. Der "geo:"-Link ist neutral. Er sagt dem Handy: "Ich habe eine Adresse, gib sie einer App."
+                // Das 'q=' steht für die Suchanfrage/Adresse.
+                const geoUrl = `geo:0,0?q=${encodedAddress}`;
+
+                // 2. Ein universeller Maps-Link als Fallback (falls geo: nicht unterstützt wird)
+                const universalMapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodedAddress}`;
+
+                // Prüfen, ob wir auf einem Mobilgerät sind
+                const isMobile = /iPhone|iPad|iPod|Android/i.test(
+                  navigator.userAgent
+                );
+
+                if (isMobile) {
+                  // Dieser Aufruf triggert auf Android/iOS die Frage: "Womit öffnen?"
+                  // sofern der Nutzer noch keine Standard-App für Geo-Daten fest hinterlegt hat.
+                  window.location.href = geoUrl;
+                } else {
+                  // Desktop-Nutzer landen einfach bei Google Maps
+                  window.open(universalMapsUrl, "_blank");
+                }
               }}
-              whileHover={{ scale: 1.03 }}
+              whileHover={{
+                scale: 1.03,
+                backgroundColor: "rgba(209, 196, 180, 0.9)",
+              }}
               whileTap={{ scale: 0.97 }}
             >
               <div className="btn-content">
-                <span>🍎</span>
-                <span className="btn-main-text">APPLE MAPS</span>
+                <span style={{ fontSize: "1.2rem" }}>📍</span>
+                <span className="btn-main-text">NAVIGATION STARTEN</span>
               </div>
             </motion.button>
           </div>
