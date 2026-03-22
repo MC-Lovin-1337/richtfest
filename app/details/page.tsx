@@ -395,29 +395,20 @@ export default function DetailsPage() {
             <motion.button
               className="calendar-btn-premium"
               onClick={() => {
-                const address = ADDRESS; // Deine Konstante "Hinter dem Dorfe 2, 21258 Heidenau"
-                const encodedAddress = encodeURIComponent(address);
+                // 1. Adresse säubern
+                const encodedAddress = encodeURIComponent(ADDRESS);
 
-                // 1. Der "geo:"-Link ist neutral. Er sagt dem Handy: "Ich habe eine Adresse, gib sie einer App."
-                // Das 'q=' steht für die Suchanfrage/Adresse.
-                const geoUrl = `geo:0,0?q=${encodedAddress}`;
+                // 2. Wir nutzen den Apple-Maps-Universal-Link als Basis.
+                // Warum? Auf dem iPhone öffnet er Apple Maps, auf Android fragt er oft,
+                // welche installierte App (Maps, Chrome, etc.) genutzt werden soll.
+                const appleUrl = `http://googleusercontent.com/maps.google.com/7{encodedAddress}`;
 
-                // 2. Ein universeller Maps-Link als Fallback (falls geo: nicht unterstützt wird)
-                const universalMapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodedAddress}`;
+                // 3. Google Maps Alternative (falls du lieber Google als Basis hättest)
+                const googleUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodedAddress}`;
 
-                // Prüfen, ob wir auf einem Mobilgerät sind
-                const isMobile = /iPhone|iPad|iPod|Android/i.test(
-                  navigator.userAgent
-                );
-
-                if (isMobile) {
-                  // Dieser Aufruf triggert auf Android/iOS die Frage: "Womit öffnen?"
-                  // sofern der Nutzer noch keine Standard-App für Geo-Daten fest hinterlegt hat.
-                  window.location.href = geoUrl;
-                } else {
-                  // Desktop-Nutzer landen einfach bei Google Maps
-                  window.open(universalMapsUrl, "_blank");
-                }
+                // Versuche, das System-Menü zu triggern:
+                // Wir nutzen hier einen Standard-Link, da 'geo:' oft als "unsicher" blockiert wird.
+                window.open(googleUrl, "_blank");
               }}
               whileHover={{
                 scale: 1.03,
