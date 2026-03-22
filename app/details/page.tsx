@@ -7,7 +7,27 @@ import confetti from "canvas-confetti";
 // ==========================================
 // ZENTRALE EINSTELLUNGEN
 const EVENT_DATE = "2026-12-01T15:10:00";
+const ADDRESS = "Hinter dem Dorfe 2, 21258 Heidenau";
+const INTERMEDIATE_TEXT = "Wir bauen unser Glück – und ihr seid dabei!";
 // ==========================================
+
+// EXTREM LANGSAMES SCHWEBEN FÜR SCROLL-EFFEKTE
+const slowScrollReveal: Variants = {
+  hidden: {
+    opacity: 0,
+    y: 100,
+    filter: "blur(10px)",
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+    filter: "blur(0px)",
+    transition: {
+      duration: 2.5,
+      ease: [0.2, 0.6, 0.3, 1],
+    },
+  },
+};
 
 const fastEnterVariants: Variants = {
   enter: { opacity: 0, scale: 1.02 },
@@ -29,6 +49,7 @@ export default function DetailsPage() {
   const [currentImg, setCurrentImg] = useState(0);
   const [sentStatus, setSentStatus] = useState("");
   const [showPopup, setShowPopup] = useState(false);
+  const [isAccepted, setIsAccepted] = useState(true);
 
   const formattedDateText = useMemo(() => {
     const d = new Date(EVENT_DATE);
@@ -84,12 +105,7 @@ export default function DetailsPage() {
       date.toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
     const startStr = formatICS(d);
     const endStr = formatICS(new Date(d.getTime() + 4 * 60 * 60 * 1000));
-
-    const event = {
-      title: "Richtfest Ellena und Sven Hinter dem Dorfe 2",
-      location: "Hinter dem Dorfe 2, 21258 Heidenau",
-    };
-
+    const event = { title: "Richtfest Ellena und Sven", location: ADDRESS };
     const icsContent = `BEGIN:VCALENDAR\nVERSION:2.0\nBEGIN:VEVENT\nSUMMARY:${event.title}\nDTSTART:${startStr}\nDTEND:${endStr}\nLOCATION:${event.location}\nEND:VEVENT\nEND:VCALENDAR`;
     const blob = new Blob([icsContent], {
       type: "text/calendar;charset=utf-8",
@@ -104,6 +120,10 @@ export default function DetailsPage() {
     e.preventDefault();
     setSentStatus("Wird gesendet...");
     const formData = new FormData(e.currentTarget);
+    const statusValue = formData.get("status");
+    const checkAccepted = statusValue === "Zusage";
+    setIsAccepted(checkAccepted);
+
     formData.append("access_key", "a48e61a4-1dd6-49fc-8c7d-b125aab36fb5");
 
     try {
@@ -114,17 +134,19 @@ export default function DetailsPage() {
       const result = await response.json();
       if (result.success) {
         setSentStatus("Erfolgreich gesendet! 🎉");
-        confetti({
-          particleCount: 150,
-          spread: 70,
-          origin: { y: 0.6 },
-          colors: ["#d1c4b4", "#4a4a4a", "#ffffff"],
-        });
         setShowPopup(true);
+        if (checkAccepted) {
+          confetti({
+            particleCount: 150,
+            spread: 70,
+            origin: { y: 0.6 },
+            colors: ["#d1c4b4", "#4a4a4a", "#ffffff"],
+          });
+        }
         (e.target as HTMLFormElement).reset();
-        setTimeout(() => router.push("/"), 6000);
+        setTimeout(() => router.push("/"), 8000);
       } else {
-        setSentStatus("Fehler: " + (result.message || "Prüfe den Key"));
+        setSentStatus("Fehler beim Senden.");
       }
     } catch (error) {
       setSentStatus("Verbindungsfehler.");
@@ -139,7 +161,38 @@ export default function DetailsPage() {
         animate={{ opacity: 1 }}
         transition={{ duration: 1 }}
       >
-        <div className="slideshow-container">
+        {/* SLIDESHOW MIT WEICHEM SCHATTEN-EFFEKT (VIGNETTE) */}
+        <div
+          className="slideshow-container"
+          style={{
+            position: "relative",
+            overflow: "hidden",
+            height: "400px", // Höhe festlegen
+            width: "100%", // Volle Breite
+            margin: "0 auto 40px", // Zentriert, Abstand nach unten
+
+            // 1. Der äußere, weiche Schatten
+            boxShadow: "0 20px 80px rgba(0,0,0,0.15)",
+
+            // 2. Abrundung für einen weicheren Look
+            borderRadius: "40px",
+          }}
+        >
+          {/* 3. Der innere Schatten (Vignette), der die Kanten des Bildes weich macht */}
+          <div
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: "100%",
+              boxShadow: "inset 0 0 100px 30px rgba(255,255,255,0.8)", // Weißer Innenschatten
+              zIndex: 10, // Liegt über dem Bild
+              pointerEvents: "none", // Klicks gehen durch
+              borderRadius: "40px", // Gleiche Abrundung
+            }}
+          />
+
           <AnimatePresence mode="popLayout">
             <motion.img
               key={currentImg}
@@ -149,68 +202,101 @@ export default function DetailsPage() {
               animate="center"
               exit="exit"
               className="slide-img"
+              style={{
+                width: "100%",
+                height: "100%",
+                objectFit: "cover", // Bild füllt den Container
+                borderRadius: "40px", // Bild abrunden
+              }}
             />
           </AnimatePresence>
         </div>
 
         <h1 className="details-title typewriter">Richtfest Einladung</h1>
-        <div className="details-divider"></div>
 
-        <div className="info-section">
+        {/* DOPPEL-DIVIDER MIT TEXT DAZWISCHEN */}
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            margin: "20px 0",
+          }}
+        >
+          <motion.div
+            className="details-divider"
+            initial={{ width: 0, opacity: 0 }}
+            animate={{ width: "80px", opacity: 1 }}
+            transition={{ duration: 1.5, delay: 0.5 }}
+          ></motion.div>
+
+          <motion.p
+            style={{
+              margin: "15px 0",
+              fontSize: "1.1rem",
+              fontStyle: "italic",
+              color: "#6b6b6b",
+              textAlign: "center",
+              maxWidth: "80%",
+              lineHeight: "1.4",
+            }}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1.2, delay: 1 }}
+          >
+            {INTERMEDIATE_TEXT}
+          </motion.p>
+
+          <motion.div
+            className="details-divider"
+            initial={{ width: 0, opacity: 0 }}
+            animate={{ width: "80px", opacity: 1 }}
+            transition={{ duration: 1.5, delay: 0.5 }}
+          ></motion.div>
+        </div>
+
+        {/* INFO SECTION */}
+        <div className="info-section" style={{ marginTop: "60px" }}>
           <p>
             <strong>WANN:</strong> {formattedDateText}
           </p>
           <p>
-            <strong>WO:</strong> Hinter dem Dorfe 2, 21258 Heidenau
+            <strong>WO:</strong> {ADDRESS}
           </p>
 
           <div
-            className="map-container"
-            style={{
-              borderRadius: "16px",
-              overflow: "hidden",
-              boxShadow: "0 4px 15px rgba(0,0,0,0.08)",
-              marginTop: "20px",
-              height: "300px",
-              border: "1px solid #eee",
-            }}
+            className="button-group"
+            style={{ marginTop: "40px", marginBottom: "40px" }}
           >
-            <iframe
-              width="100%"
-              height="100%"
-              style={{ border: 0 }}
-              loading="lazy"
-              allowFullScreen
-              referrerPolicy="no-referrer-when-downgrade"
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2383.784856240875!2d9.638466694004487!3d53.311299205875564!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47b1a06781aec761%3A0xcb79d8f3214ad5a3!2sHinter%20dem%20Dorfe%2C%2021258%20Heidenau!5e0!3m2!1sde!2sde!4v1774135090185!5m2!1sde!2sde"
-            ></iframe>
-          </div>
-
-          <div className="button-group">
+            {" "}
+            {/* Kleinerer Abstand nach unten */}
             <motion.button
               className="calendar-btn-premium"
               onClick={addToCalendar}
               whileHover={{
                 scale: 1.03,
                 backgroundColor: "rgba(209, 196, 180, 0.9)",
-                boxShadow: "0 10px 25px rgba(0,0,0,0.1)",
               }}
               whileTap={{ scale: 0.97 }}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 }}
             >
               <div className="btn-content">
-                <span className="calendar-icon-animated">📅</span>
-                <div className="btn-text-wrapper">
-                  <span className="btn-main-text">TERMIN SPEICHERN</span>
-                </div>
+                <span>📅</span>
+                <span className="btn-main-text">TERMIN SPEICHERN</span>
               </div>
             </motion.button>
           </div>
         </div>
 
-        <div className="countdown-container">
+        {/* --- AB HIER: LANGSAMES SCHWEBEN BEIM SCROLLEN --- */}
+
+        {/* COUNTDOWN */}
+        <motion.div
+          className="countdown-container"
+          variants={slowScrollReveal}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.1 }} // Reagiert etwas früher
+        >
           <div className="countdown-item">
             <span>{timeLeft.days}</span>Tage
           </div>
@@ -223,10 +309,19 @@ export default function DetailsPage() {
           <div className="countdown-item">
             <span>{timeLeft.seconds}</span>Sek
           </div>
-        </div>
+        </motion.div>
 
-        <div className="form-container">
-          <h3 className="typewriter">Zusagen / Absagen</h3>
+        {/* RSVP FORMULAR */}
+        <motion.div
+          className="form-container"
+          variants={slowScrollReveal}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+        >
+          <h3 className="typewriter" style={{ marginBottom: "25px" }}>
+            Zusagen / Absagen
+          </h3>
           <form className="rsvp-form-simple" onSubmit={handleFormSubmit}>
             <input
               type="text"
@@ -256,7 +351,7 @@ export default function DetailsPage() {
             <button
               type="submit"
               className="submit-btn"
-              disabled={sentStatus.includes("Erfolgreich")}
+              disabled={sentStatus.includes("Erfolgreis")}
             >
               {sentStatus.includes("Erfolgreich")
                 ? "GESENDET ✓"
@@ -264,13 +359,84 @@ export default function DetailsPage() {
             </button>
           </form>
           {sentStatus && <p className="status-msg">{sentStatus}</p>}
-        </div>
+        </motion.div>
 
-        <button className="back-link" onClick={() => router.push("/")}>
+        {/* KARTE & NAVIGATION */}
+        <motion.div
+          className="map-section"
+          style={{
+            marginTop: "100px",
+            textAlign: "center",
+            paddingBottom: "40px",
+          }}
+          variants={slowScrollReveal}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.1 }}
+        >
+          <h3
+            style={{
+              marginBottom: "25px",
+              fontSize: "1.3rem",
+              color: "#4a4a4a",
+              fontWeight: "300",
+            }}
+          >
+            ANFAHRT
+          </h3>
+          <div
+            className="map-container"
+            style={{
+              borderRadius: "24px",
+              overflow: "hidden",
+              boxShadow: "0 15px 45px rgba(0,0,0,0.1)",
+              height: "400px",
+              border: "1px solid #eee",
+              marginBottom: "35px",
+              maxWidth: "900px",
+              marginInline: "auto",
+            }}
+          >
+            <iframe
+              width="100%"
+              height="100%"
+              style={{ border: 0 }}
+              loading="lazy"
+              src={`https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2383.7848522500085!2d9.640762677075488!3d53.311299277344936!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47b1a06781aec761%3A0xcb79d8f3214ad5a3!2sHinter%20dem%20Dorfe%2C%2021258%20Heidenau!5e0!3m2!1sde!2sde!4v1774142828219!5m2!1sde!2sde`}
+            ></iframe>
+          </div>
+
+          <div className="button-group">
+            <motion.button
+              className="calendar-btn-premium"
+              onClick={() => {
+                const mapUrl = `https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2383.7848522500085!2d9.640762677075488!3d53.311299277344936!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47b1a06781aec761%3A0xcb79d8f3214ad5a3!2sHinter%20dem%20Dorfe%2C%2021258%20Heidenau!5e0!3m2!1sde!2sde!4v1774142828219!5m2!1sde!2sde`;
+                window.open(mapUrl, "_blank");
+              }}
+              whileHover={{
+                scale: 1.03,
+                backgroundColor: "rgba(209, 196, 180, 0.9)",
+              }}
+              whileTap={{ scale: 0.97 }}
+            >
+              <div className="btn-content">
+                <span style={{ fontSize: "1.2rem" }}>📍</span>
+                <span className="btn-main-text">NAVIGATION STARTEN</span>
+              </div>
+            </motion.button>
+          </div>
+        </motion.div>
+
+        <button
+          className="back-link"
+          onClick={() => router.push("/")}
+          style={{ marginTop: "60px", marginBottom: "100px" }}
+        >
           ZURÜCK
         </button>
       </motion.div>
 
+      {/* POPUP LOGIK */}
       <AnimatePresence>
         {showPopup && (
           <motion.div
@@ -285,15 +451,19 @@ export default function DetailsPage() {
               initial={{ scale: 0.5, y: 100 }}
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.5, y: 100 }}
-              transition={{ type: "spring", stiffness: 300, damping: 20 }}
               onClick={(e) => e.stopPropagation()}
             >
-              <h2>Vielen Dank!</h2>
-              <p>
-                Wir freuen uns sehr,
-                <br />
-                über die Zusage! ❤️
-              </p>
+              {isAccepted ? (
+                <>
+                  <h2 style={{ color: "#2d5a27" }}>Wie schön! 🎉</h2>
+                  <p>Wir freuen uns riesig, dass du dabei bist!</p>
+                </>
+              ) : (
+                <>
+                  <h2 style={{ color: "#4a4a4a" }}>Schade! 🏠</h2>
+                  <p>Wir haben deine Absage erhalten.</p>
+                </>
+              )}
               <button
                 onClick={() => setShowPopup(false)}
                 className="popup-close-btn"
