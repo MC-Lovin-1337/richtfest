@@ -50,6 +50,7 @@ export default function DetailsPage() {
   const [sentStatus, setSentStatus] = useState("");
   const [showPopup, setShowPopup] = useState(false);
   const [isAccepted, setIsAccepted] = useState(true);
+  const [showNavOptions, setShowNavOptions] = useState(false);
 
   const formattedDateText = useMemo(() => {
     const d = new Date(EVENT_DATE);
@@ -391,37 +392,136 @@ export default function DetailsPage() {
             ></iframe>
           </div>
 
-          <div className="button-group">
+          <div className="button-group" style={{ marginTop: "40px" }}>
             <motion.button
               className="calendar-btn-premium"
-              onClick={() => {
-                // 1. Adresse säubern
-                const encodedAddress = encodeURIComponent(ADDRESS);
-
-                // 2. Wir nutzen den Apple-Maps-Universal-Link als Basis.
-                // Warum? Auf dem iPhone öffnet er Apple Maps, auf Android fragt er oft,
-                // welche installierte App (Maps, Chrome, etc.) genutzt werden soll.
-                const appleUrl = `http://googleusercontent.com/maps.google.com/7{encodedAddress}`;
-
-                // 3. Google Maps Alternative (falls du lieber Google als Basis hättest)
-                const googleUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodedAddress}`;
-
-                // Versuche, das System-Menü zu triggern:
-                // Wir nutzen hier einen Standard-Link, da 'geo:' oft als "unsicher" blockiert wird.
-                window.open(googleUrl, "_blank");
-              }}
-              whileHover={{
-                scale: 1.03,
-                backgroundColor: "rgba(209, 196, 180, 0.9)",
-              }}
+              onClick={() => setShowNavOptions(true)}
+              whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
             >
               <div className="btn-content">
-                <span style={{ fontSize: "1.2rem" }}>📍</span>
+                <span>📍</span>
                 <span className="btn-main-text">NAVIGATION STARTEN</span>
               </div>
             </motion.button>
           </div>
+
+          {/* DAS ENTSCHEIDUNGS-POPUP */}
+          <AnimatePresence>
+            {showNavOptions && (
+              <motion.div
+                className="popup-overlay"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setShowNavOptions(false)}
+                style={{
+                  position: "fixed",
+                  top: 0,
+                  left: 0,
+                  width: "100%",
+                  height: "100%",
+                  backgroundColor: "rgba(0,0,0,0.5)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  zIndex: 9999,
+                }}
+              >
+                <motion.div
+                  className="popup-content"
+                  initial={{ scale: 0.9, y: 20 }}
+                  animate={{ scale: 1, y: 0 }}
+                  exit={{ scale: 0.9, y: 20 }}
+                  onClick={(e) => e.stopPropagation()}
+                  style={{
+                    backgroundColor: "#fff",
+                    padding: "30px",
+                    borderRadius: "20px",
+                    textAlign: "center",
+                    width: "85%",
+                    maxWidth: "400px",
+                  }}
+                >
+                  <h3 style={{ marginBottom: "20px", color: "#4a4a4a" }}>
+                    Wähle deine App
+                  </h3>
+
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "12px",
+                    }}
+                  >
+                    <button
+                      onClick={() => {
+                        window.open(
+                          `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(
+                            ADDRESS
+                          )}`,
+                          "_blank"
+                        );
+                        setShowNavOptions(false);
+                      }}
+                      style={{
+                        padding: "12px",
+                        borderRadius: "10px",
+                        border: "1px solid #ddd",
+                        background: "#f9f9f9",
+                        cursor: "pointer",
+                      }}
+                    >
+                      🌐 Google Maps
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        // Öffnet Apple Maps auf iPhone, Fallback auf Google Maps bei Android
+                        const appleUrl = `maps://?daddr=${encodeURIComponent(
+                          ADDRESS
+                        )}`;
+                        const googleFallback = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(
+                          ADDRESS
+                        )}`;
+
+                        const isIOS = /iPhone|iPad|iPod/i.test(
+                          navigator.userAgent
+                        );
+                        window.open(
+                          isIOS ? appleUrl : googleFallback,
+                          "_blank"
+                        );
+                        setShowNavOptions(false);
+                      }}
+                      style={{
+                        padding: "12px",
+                        borderRadius: "10px",
+                        border: "1px solid #ddd",
+                        background: "#f9f9f9",
+                        cursor: "pointer",
+                      }}
+                    >
+                      🍎 Apple Maps
+                    </button>
+                  </div>
+
+                  <button
+                    onClick={() => setShowNavOptions(false)}
+                    style={{
+                      marginTop: "20px",
+                      color: "#888",
+                      border: "none",
+                      background: "none",
+                      textDecoration: "underline",
+                    }}
+                  >
+                    Abbrechen
+                  </button>
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </motion.div>
 
         <button
