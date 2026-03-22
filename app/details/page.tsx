@@ -454,14 +454,14 @@ export default function DetailsPage() {
                       gap: "12px",
                     }}
                   >
+                    {/* Google Maps */}
                     <button
                       onClick={() => {
-                        window.open(
-                          `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(
-                            ADDRESS
-                          )}`,
-                          "_blank"
-                        );
+                        const url = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(
+                          ADDRESS
+                        )}`;
+                        // _self oder location.href verhindert den leeren Tab
+                        window.location.href = url;
                         setShowNavOptions(false);
                       }}
                       style={{
@@ -475,23 +475,22 @@ export default function DetailsPage() {
                       🌐 Google Maps
                     </button>
 
+                    {/* Apple Maps */}
                     <button
                       onClick={() => {
-                        // Öffnet Apple Maps auf iPhone, Fallback auf Google Maps bei Android
-                        const appleUrl = `maps://?daddr=${encodeURIComponent(
-                          ADDRESS
-                        )}`;
-                        const googleFallback = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(
-                          ADDRESS
-                        )}`;
-
                         const isIOS = /iPhone|iPad|iPod/i.test(
                           navigator.userAgent
                         );
-                        window.open(
-                          isIOS ? appleUrl : googleFallback,
-                          "_blank"
-                        );
+                        if (isIOS) {
+                          // Direktes Umleiten ohne neuen Tab
+                          window.location.href = `maps://?daddr=${encodeURIComponent(
+                            ADDRESS
+                          )}`;
+                        } else {
+                          window.location.href = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(
+                            ADDRESS
+                          )}`;
+                        }
                         setShowNavOptions(false);
                       }}
                       style={{
@@ -504,13 +503,14 @@ export default function DetailsPage() {
                     >
                       🍎 Apple Maps
                     </button>
+
+                    {/* Waze */}
                     <button
                       onClick={() => {
-                        // Waze nutzt ein spezielles URL-Schema: waze://?q=ADRESSE&navigate=yes
-                        const url = `https://waze.com/ul?q=${encodeURIComponent(
+                        // Waze Universal Link
+                        window.location.href = `https://waze.com/ul?q=${encodeURIComponent(
                           ADDRESS
                         )}&navigate=yes`;
-                        window.open(url, "_blank");
                         setShowNavOptions(false);
                       }}
                       style={{
