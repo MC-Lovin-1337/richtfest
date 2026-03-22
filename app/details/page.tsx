@@ -391,28 +391,47 @@ export default function DetailsPage() {
             ></iframe>
           </div>
 
-          <div className="button-group">
+          <div
+            className="button-group"
+            style={{
+              display: "flex",
+              gap: "10px",
+              justifyContent: "center",
+              flexWrap: "wrap",
+            }}
+          >
+            {/* GOOGLE MAPS BUTTON */}
             <motion.button
               className="calendar-btn-premium"
+              style={{ minWidth: "160px", fontSize: "0.9rem" }}
               onClick={() => {
-                // Die Adresse wird für URL-Strukturen sicher gemacht
-                const encodedAddress = encodeURIComponent(ADDRESS);
-
-                // Dieser Link-Typ (geo:) triggert auf Mobilgeräten die App-Auswahl.
-                // Falls das fehlschlägt, öffnet er Google Maps im Browser als Fallback.
-                const mapUrl = `https://www.google.com/maps/search/?api=1&query=${encodedAddress}`;
-
-                window.open(mapUrl, "_blank");
+                const url = `https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2383.7848522500085!2d9.640762677075488!3d53.311299277344936!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47b1a06781aec761%3A0xcb79d8f3214ad5a3!2sHinter%20dem%20Dorfe%2C%2021258%20Heidenau!5e0!3m2!1sde!2sde!4v1774146089892!5m2!1sde!2sde`;
+                window.open(url, "_blank");
               }}
-              whileHover={{
-                scale: 1.03,
-                backgroundColor: "rgba(209, 196, 180, 0.9)",
-              }}
+              whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
             >
               <div className="btn-content">
-                <span style={{ fontSize: "1.2rem" }}>📍</span>
-                <span className="btn-main-text">NAVIGATION STARTEN</span>
+                <span>🌐</span>
+                <span className="btn-main-text">GOOGLE MAPS</span>
+              </div>
+            </motion.button>
+
+            {/* APPLE MAPS BUTTON */}
+            <motion.button
+              className="calendar-btn-premium"
+              style={{ minWidth: "160px", fontSize: "0.9rem" }}
+              onClick={() => {
+                // maps:// triggert auf iPhones direkt Apple Maps
+                const url = `https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2383.7848522500085!2d9.640762677075488!3d53.311299277344936!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47b1a06781aec761%3A0xcb79d8f3214ad5a3!2sHinter%20dem%20Dorfe%2C%2021258%20Heidenau!5e0!3m2!1sde!2sde!4v1774146089892!5m2!1sde!2sde`;
+                window.open(url, "_blank");
+              }}
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
+            >
+              <div className="btn-content">
+                <span>🍎</span>
+                <span className="btn-main-text">APPLE MAPS</span>
               </div>
             </motion.button>
           </div>
