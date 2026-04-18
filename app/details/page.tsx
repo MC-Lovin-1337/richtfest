@@ -45,7 +45,13 @@ const fastEnterVariants: Variants = {
 
 export default function DetailsPage() {
   const router = useRouter();
-  const images = ["/haus1.jpg", "/haus2.jpg", "/haus3.jpg"];
+  const images = [
+    "/haus1.jpg",
+    "/haus2.jpg",
+    "/haus3.jpg",
+    "/haus4.jpg",
+    "/haus5.jpg",
+  ];
   const [currentImg, setCurrentImg] = useState(0);
   const [sentStatus, setSentStatus] = useState("");
   const [showPopup, setShowPopup] = useState(false);
@@ -91,7 +97,7 @@ export default function DetailsPage() {
       setTimeLeft({
         days: Math.floor(distance / (1000 * 60 * 60 * 24)),
         hours: Math.floor(
-          (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+          (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60),
         ),
         minutes: Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)),
         seconds: Math.floor((distance % (1000 * 60)) / 1000),
@@ -458,7 +464,7 @@ export default function DetailsPage() {
                     <button
                       onClick={() => {
                         const url = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(
-                          ADDRESS
+                          ADDRESS,
                         )}`;
                         // _self oder location.href verhindert den leeren Tab
                         window.location.href = url;
@@ -479,16 +485,16 @@ export default function DetailsPage() {
                     <button
                       onClick={() => {
                         const isIOS = /iPhone|iPad|iPod/i.test(
-                          navigator.userAgent
+                          navigator.userAgent,
                         );
                         if (isIOS) {
                           // Direktes Umleiten ohne neuen Tab
                           window.location.href = `maps://?daddr=${encodeURIComponent(
-                            ADDRESS
+                            ADDRESS,
                           )}`;
                         } else {
                           window.location.href = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(
-                            ADDRESS
+                            ADDRESS,
                           )}`;
                         }
                         setShowNavOptions(false);
@@ -509,7 +515,7 @@ export default function DetailsPage() {
                       onClick={() => {
                         // Waze Universal Link
                         window.location.href = `https://waze.com/ul?q=${encodeURIComponent(
-                          ADDRESS
+                          ADDRESS,
                         )}&navigate=yes`;
                         setShowNavOptions(false);
                       }}
