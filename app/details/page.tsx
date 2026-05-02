@@ -51,6 +51,7 @@ export default function DetailsPage() {
     "/haus3.jpg",
     "/haus4.jpg",
     "/haus5.jpg",
+    "/haus6.jpg",
   ];
   const [currentImg, setCurrentImg] = useState(0);
   const [sentStatus, setSentStatus] = useState("");
