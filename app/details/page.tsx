@@ -6,7 +6,7 @@ import confetti from "canvas-confetti";
 
 // ==========================================
 // ZENTRALE EINSTELLUNGEN
-const EVENT_DATE = "2026-12-01T15:10:00";
+const EVENT_DATE = "2026-05-08T17:30:00";
 const ADDRESS = "Hinter dem Dorfe, 21258 Heidenau";
 const INTERMEDIATE_TEXT = "Wir bauen unser Glück – und ihr seid dabei!";
 // ==========================================
